@@ -24,13 +24,14 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Hearts Background */
+        /* Fixed Heart Animation - Higher Visibility */
         .heart-bg {
             position: fixed;
-            color: rgba(255, 77, 109, 0.2);
-            font-size: 18px;
-            z-index: -1;
-            animation: fall 6s linear infinite;
+            color: #ff4d6d;
+            font-size: 22px;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear infinite;
         }
 
         @keyframes fall {
@@ -38,7 +39,6 @@
             100% { transform: translateY(110vh) rotate(360deg); }
         }
 
-        /* Container - Flexbox for Mobile centering */
         .wrapper {
             display: flex;
             flex-direction: column;
@@ -46,6 +46,8 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            z-index: 2; /* Sits above falling hearts */
         }
 
         .photo-frame {
@@ -56,6 +58,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             animation: float 3s ease-in-out infinite;
             margin-bottom: 20px;
+            background: #ddd; /* fallback if image fails */
         }
 
         @keyframes float {
@@ -74,10 +77,11 @@
             font-size: 1.1rem;
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+            font-weight: bold;
         }
 
         .main-wish {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 15px;
             font-size: 0.95rem;
@@ -85,6 +89,7 @@
             width: 100%;
             max-width: 320px;
             margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         .btn {
@@ -96,7 +101,10 @@
             border-radius: 50px;
             font-weight: bold;
             box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+        .btn:active { transform: scale(0.95); }
 
         /* Surprise Overlay */
         #surprise-overlay {
@@ -109,16 +117,15 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 25px;
+            padding: 30px;
         }
 
         #typewriter {
             font-family: 'Dancing Script', cursive;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             color: #ffccd5;
             text-align: center;
-            max-height: 60vh;
-            overflow-y: auto;
+            max-width: 90%;
         }
 
         .signature {
@@ -155,44 +162,70 @@
 
     <div id="surprise-overlay">
         <div id="typewriter"></div>
-        <div class="signature">Forever Yours,<br><strong style="font-size: 1.8rem;">Ankit Jain</strong></div>
+        <div class="signature">Forever Yours,<br><strong style="font-size: 2rem;">Ankit Jain</strong></div>
     </div>
 
     <script>
+        // 1. Falling Hearts Logic
         function createBackgroundHearts() {
-            for(let i=0; i<15; i++) {
+            const heartCount = 30;
+            for(let i=0; i<heartCount; i++) {
                 const heart = document.createElement('div');
                 heart.classList.add('heart-bg');
                 heart.innerHTML = '❤️';
                 heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * -100 + 'vh'; 
                 heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.opacity = Math.random() * 0.8 + 0.2;
                 document.body.appendChild(heart);
             }
         }
         createBackgroundHearts();
 
+        // 2. Typewriter Message
         const message = "To my dearest Fruitypie, you are the most precious part of my life. As you turn 21 today, I want to promise you that no matter how many birthdays pass, I will always be here to hold your hand. You are my world. Happy Birthday, Beautiful!";
-        let i = 0;
+        let charIndex = 0;
 
         function typeWriter() {
-            if (i < message.length) {
-                document.getElementById("typewriter").innerHTML += message.charAt(i);
-                i++;
+            if (charIndex < message.length) {
+                document.getElementById("typewriter").innerHTML += message.charAt(charIndex);
+                charIndex++;
                 setTimeout(typeWriter, 50);
             }
         }
 
+        // 3. The Trigger
         function startMagicalExperience() {
-            document.getElementById('bgMusic').play().catch(e => console.log("Music ready"));
+            // Play sound
+            const music = document.getElementById('bgMusic');
+            music.play().catch(() => console.log("User interaction required for audio"));
             
-            // Mobile-optimized burst
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ffb703']
-            });
+            // Confetti Explosion
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
 
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff4d6d', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff4d6d', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Show Overlay & Start Typing
             document.getElementById('surprise-overlay').style.display = 'flex';
             typeWriter();
         }
