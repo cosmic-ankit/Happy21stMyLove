@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy 21st, Shikha!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --dark-red: #800e13;
+            --bg-soft: #fff0f3;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg-soft);
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Hearts Background */
+        .heart-bg {
+            position: fixed;
+            color: rgba(255, 77, 109, 0.2);
+            font-size: 18px;
+            z-index: -1;
+            animation: fall 6s linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Container - Flexbox for Mobile centering */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .photo-frame {
+            width: 180px; height: 180px;
+            border: 6px solid white;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: var(--dark-red); margin: 0; }
+        .nickname { font-size: 1.2rem; color: var(--primary); font-weight: 600; margin-bottom: 15px; }
+
+        .age-badge {
+            background: linear-gradient(45deg, var(--primary), var(--dark-red));
+            color: white;
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+        }
+
+        .main-wish {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        /* Surprise Overlay */
+        #surprise-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        #typewriter {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: #ffccd5;
+            text-align: center;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .signature {
+            margin-top: 30px;
+            font-size: 1.1rem;
+            color: var(--primary);
+            opacity: 0;
+            animation: fadeIn 2s 4s forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="mine.jpg" loop></audio>
+
+    <div class="wrapper">
+        <div class="photo-frame">
+            <img src="https://via.placeholder.com/180" alt="Shikha" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+
+        <h1>Happy Birthday, My Love!</h1>
+        <div class="nickname">Meri "Jaan" ❤️</div>
+        
+        <div class="age-badge">21 & Fabulous</div>
+
+        <div class="main-wish">
+            <p>Every year you get more beautiful, Shikha. You make every day worth living, and I'm so lucky to call you mine. You deserve all the happiness in the world, and I promise to bring it to you.</p>
+        </div>
+
+        <button class="btn" onclick="startMagicalExperience()">Unlock My Heart ✨</button>
+    </div>
+
+    <div id="surprise-overlay">
+        <div id="typewriter"></div>
+        <div class="signature">Forever Yours,<br><strong style="font-size: 1.8rem;">Ankit Jain</strong></div>
+    </div>
+
+    <script>
+        function createBackgroundHearts() {
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-bg');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                document.body.appendChild(heart);
+            }
+        }
+        createBackgroundHearts();
+
+        const message = "To my dearest Fruitypie, you are the most precious part of my life. As you turn 21 today, I want to promise you that no matter how many birthdays pass, I will always be here to hold your hand. You are my world. Happy Birthday, Beautiful!";
+        let i = 0;
+
+        function typeWriter() {
+            if (i < message.length) {
+                document.getElementById("typewriter").innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        function startMagicalExperience() {
+            document.getElementById('bgMusic').play().catch(e => console.log("Music ready"));
+            
+            // Mobile-optimized burst
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ffb703']
+            });
+
+            document.getElementById('surprise-overlay').style.display = 'flex';
+            typeWriter();
+        }
+    </script>
+</body>
+</html>
